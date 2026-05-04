@@ -95,6 +95,10 @@ Author: **Abdullah Hani Abdellatif Al-Shobaki**.
 
 [MIT](LICENSE).
 
+## Demo video
+
+If you have a screen recording (for example the course demo `.mp4`), upload it to **YouTube** (or similar) as **Unlisted** and add the link in the GitHub repository **About** section. Keeping large videos out of the git history keeps clones fast and avoids GitHub file-size limits.
+
 ## Suggested GitHub settings (after push)
 
 - **About** → add website or demo link if you host one; set **Topics**, e.g. `flask`, `mongodb`, `cosmos-db`, `kubernetes`, `aks`, `azure`, `docker`, `python`, `crud`.
