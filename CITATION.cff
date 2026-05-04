@@ -1,0 +1,18 @@
+cff-version: "1.2.0"
+title: "Azure Flask Bookstore"
+message: "If you use this software, please cite it using these metadata."
+type: software
+authors:
+  - family-names: "Al-Shobaki"
+    given-names: "Abdullah Hani Abdellatif"
+repository-code: "https://github.com/3bdulah/azure-flask-bookstore"
+license: MIT
+date-released: "2026-05-05"
+keywords:
+  - flask
+  - azure
+  - kubernetes
+  - cosmos-db
+  - mongodb
+  - docker
+  - crud

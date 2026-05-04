@@ -1,62 +1,70 @@
-# Bookstore — Flask, MongoDB, and Kubernetes on Azure
+# Azure Flask Bookstore
 
-A full-stack **book inventory** web app built for **AIN3003**: Flask CRUD UI backed by **Azure Cosmos DB (MongoDB API)**, containerized with **Docker**, and deployable to **Azure Kubernetes Service (AKS)** with manifests for services, persistence, and network policies.
+**Cloud-native book inventory** — Flask CRUD, **Azure Cosmos DB (MongoDB API)**, **Docker** + **Gunicorn**, and **Kubernetes** manifests for **AKS** (services, persistence, network policy).
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
-[![CI](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/actions/workflows/ci.yml)
+<p align="center">
+  <a href="https://github.com/3bdulah/azure-flask-bookstore"><img src="https://img.shields.io/badge/GitHub-azure--flask--bookstore-181717?logo=github" alt="GitHub repository" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" /></a>
+  <img src="https://img.shields.io/badge/python-3.12-blue.svg?logo=python&logoColor=white" alt="Python 3.12" />
+  <a href="https://github.com/3bdulah/azure-flask-bookstore/actions/workflows/ci.yml"><img src="https://github.com/3bdulah/azure-flask-bookstore/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <a href="https://github.com/3bdulah/azure-flask-bookstore/stargazers"><img src="https://img.shields.io/github/stars/3bdulah/azure-flask-bookstore?style=flat&logo=github" alt="GitHub stars" /></a>
+</p>
 
-> Replace `YOUR_GITHUB_USERNAME` / `YOUR_REPO_NAME` in the badges above after you create the GitHub repository (badge URLs are plain text in the README).
+---
 
-## Highlights
+## Why this repo
 
-- **CRUD** for books (ISBN, title, author, publisher, category, cover image path, etc.).
-- **Cosmos DB** as the managed Mongo-compatible database (`ain3003` database in code).
-- **Docker** + **Gunicorn** for production-style serving.
-- **Kubernetes** YAML for MongoDB in-cluster (optional path), app `Deployment`/`Service`, `ConfigMap`, `Secret`, and `NetworkPolicy`.
+| Area | What you get |
+|------|----------------|
+| **App** | Server-rendered Flask UI; full CRUD on books (ISBN, title, author, publisher, category, cover path, etc.). |
+| **Data** | Cosmos DB Mongo API (`ain3003` database in code); optional in-cluster Mongo manifests for coursework paths. |
+| **Ops** | Multi-replica `Deployment`, `Service`, `ConfigMap` / `Secret` placeholders, `NetworkPolicy`, PVC-backed Mongo. |
+| **Hygiene** | No secrets in source; `.env.example`; [`SECURITY.md`](SECURITY.md); CI compiles Python on every push. |
 
-## Repository layout
+## Table of contents
 
-| Path | Purpose |
-|------|--------|
-| [`bookstore-app/`](bookstore-app/) | Flask application, templates, static assets, Dockerfile |
-| [`bookstore-app/YAML/`](bookstore-app/YAML/) | Kubernetes manifests (edit placeholders before applying) |
-| [`BookstoreDB.txt`](BookstoreDB.txt) | Example `insertMany` data for seeding MongoDB / Cosmos |
-| [`SECURITY.md`](SECURITY.md) | How to handle secrets and credential rotation |
-
-Detailed deployment notes also live in [`bookstore-app/README.md`](bookstore-app/README.md).
+- [Quick start (local)](#quick-start-local)
+- [Docker](#docker)
+- [Kubernetes](#kubernetes-outline)
+- [Architecture](#architecture)
+- [Docs & data](#docs--data)
+- [Demo video](#demo-video)
+- [Contributing](#contributing)
+- [Credits & license](#credits--license)
 
 ## Quick start (local)
 
-**Prerequisites:** Python 3.12+, a Cosmos DB for MongoDB API connection string (or adapt the code for local Mongo only).
+**Prerequisites:** Python **3.12+** and a **Cosmos DB for MongoDB API** connection string (see [`.env.example`](bookstore-app/.env.example)).
 
 ```bash
-cd bookstore-app
+git clone https://github.com/3bdulah/azure-flask-bookstore.git
+cd azure-flask-bookstore/bookstore-app
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env        # edit .env — never commit it
-python app.py               # http://0.0.0.0:5000
+cp .env.example .env               # edit .env — never commit it
+python app.py                      # http://127.0.0.1:5000
 ```
 
 ## Docker
 
 ```bash
 cd bookstore-app
-docker build -t bookstore-app:local .
-docker run --rm -p 5000:5000 --env-file .env bookstore-app:local
+docker build -t azure-flask-bookstore:local .
+docker run --rm -p 5000:5000 --env-file .env azure-flask-bookstore:local
 ```
 
 ## Kubernetes (outline)
 
-1. Build and push the image to your registry (e.g. Azure Container Registry).
-2. In `YAML/deployment.yaml`, set `YOUR_ACR_NAME.azurecr.io` to your ACR login server name.
-3. Put real connection strings in **private** secrets (not in git); replace placeholders in `configmap.yaml` / `secrets.yaml` or use your preferred secret management.
+1. Build and push the image to **Azure Container Registry** (or another registry).
+2. Edit [`bookstore-app/YAML/deployment.yaml`](bookstore-app/YAML/deployment.yaml): replace `YOUR_ACR_NAME` with your ACR login server name.
+3. Fill **private** secrets only on the cluster (do not commit real `configmap` / `secret` values). Start from the placeholders in [`YAML/configmap.yaml`](bookstore-app/YAML/configmap.yaml) and [`YAML/secrets.yaml`](bookstore-app/YAML/secrets.yaml).
 4. From `bookstore-app/YAML/`:
 
 ```bash
 kubectl apply -f mongodb-pvc.yaml
 kubectl apply -f mongodb-deployment.yaml
+kubectl apply -f mongodb-service.yaml
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 kubectl apply -f configmap.yaml
@@ -64,9 +72,16 @@ kubectl apply -f secrets.yaml
 kubectl apply -f network-policy.yaml
 ```
 
-Adjust order and resources to match your cluster (some courses use in-cluster Mongo only, others Cosmos only).
+Order can vary with your cluster; align with your assignment or platform docs.
 
-## Architecture (high level)
+## Architecture
+
+<p align="center">
+  <img src="bookstore-app/Project_Architecture.png" alt="Project architecture diagram" width="720" />
+</p>
+
+<details>
+<summary><strong>Mermaid (same idea, text form)</strong></summary>
 
 ```mermaid
 flowchart LR
@@ -86,21 +101,29 @@ flowchart LR
   P -. optional .-> M
 ```
 
-## Course and credits
+</details>
 
-University coursework (**AIN3003**). Instructor acknowledgment: **Gökşin Bakır**.  
-Author: **Abdullah Hani Abdellatif Al-Shobaki**.
+## Docs & data
 
-## License
-
-[MIT](LICENSE).
+| Path | Purpose |
+|------|--------|
+| [`bookstore-app/`](bookstore-app/) | Application code, templates, static assets, `Dockerfile` |
+| [`bookstore-app/README.md`](bookstore-app/README.md) | Detailed Azure / ACR / AKS deployment walkthrough |
+| [`BookstoreDB.txt`](BookstoreDB.txt) | Example MongoDB `insertMany` payload for seeding |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | How to suggest changes |
+| [`CITATION.cff`](CITATION.cff) | Software citation metadata |
+| [`SECURITY.md`](SECURITY.md) | Secret handling and reporting |
 
 ## Demo video
 
-If you have a screen recording (for example the course demo `.mp4`), upload it to **YouTube** (or similar) as **Unlisted** and add the link in the GitHub repository **About** section. Keeping large videos out of the git history keeps clones fast and avoids GitHub file-size limits.
+Upload a screen recording as an **Unlisted** YouTube (or similar) and paste the URL in the repository **About** section. Large `.mp4` files stay **out of git** (see `.gitignore`) so clones stay fast.
 
-## Suggested GitHub settings (after push)
+## Contributing
 
-- **About** → add website or demo link if you host one; set **Topics**, e.g. `flask`, `mongodb`, `cosmos-db`, `kubernetes`, `aks`, `azure`, `docker`, `python`, `crud`.
-- Enable **Issues** if you want feedback; add a short **Description** one-liner.
-- Branch protection on `main` (require PR reviews) if collaborators join later.
+Issues and PRs are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Credits & license
+
+**Course:** AIN3003 · **Instructor:** Gökşin Bakır · **Author:** Abdullah Hani Abdellatif Al-Shobaki.
+
+Licensed under the [MIT License](LICENSE).
