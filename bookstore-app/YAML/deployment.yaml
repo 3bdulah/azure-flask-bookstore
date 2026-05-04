@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookstore-app
+  labels:
+    app: bookstore-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bookstore-app
+  template:
+    metadata:
+      labels:
+        app: bookstore-app
+    spec:
+      containers:
+      - name: bookstore-app
+        image: YOUR_ACR_NAME.azurecr.io/bookstore-app:latest
+        ports:
+        - containerPort: 5000
+
+        # Use ConfigMap for Environment Variables
+        envFrom:
+        - configMapRef:
+            name: flask-config
+
+        # Load Secrets Securely
+        - secretRef:
+            name: cosmosdb-credentials
+
+        resources:
+          limits:
+            memory: "512Mi"
+          requests:
+            memory: "256Mi"

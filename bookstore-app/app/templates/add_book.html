@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add a New Book</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <form id="bookForm" method="POST" action="{{ url_for('main.add_book') }}">
+            <h1>Add a New Book</h1>
+
+            <label for="title">Title*</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="isbn">ISBN</label>
+            <input type="text" id="isbn" name="isbn">
+
+            <label for="year">Year</label>
+            <input type="number" id="year" name="year">
+
+            <label for="price">Price</label>
+            <input type="number" id="price" name="price" step="0.01">
+
+            <label for="page">Pages</label>
+            <input type="number" id="page" name="page">
+
+            <label for="category">Category</label>
+            <input type="text" id="category" name="category">
+
+            <label for="publisherId">Publisher ID</label>
+            <input type="text" id="publisherId" name="publisherId">
+
+            <label for="publisherName">Publisher Name</label>
+            <input type="text" id="publisherName" name="publisherName">
+
+            <label for="authorIdentityNo">Author Identity No</label>
+            <input type="text" id="authorIdentityNo" name="authorIdentityNo">
+
+            <label for="authorFirstName">Author's First Name</label>
+            <input type="text" id="authorFirstName" name="authorFirstName">
+
+            <label for="authorLastName">Author's Last Name</label>
+            <input type="text" id="authorLastName" name="authorLastName">
+
+            <p>*Field is required</p>
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+</body>
+</html>

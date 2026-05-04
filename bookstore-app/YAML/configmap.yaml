@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-config
+  namespace: default
+data:
+  ENVIRONMENT: "production"
+  # In-cluster MongoDB (optional if you use Cosmos only).
+  MONGO_URI: "mongodb://mongodb-service:27017/"
+  # Replace with your Cosmos DB Mongo API connection string (use kubectl create secret or Sealed Secrets in production).
+  AZURE_COSMOSDB_CONNECTION_STRING: "REPLACE_WITH_YOUR_COSMOS_MONGODB_CONNECTION_STRING"

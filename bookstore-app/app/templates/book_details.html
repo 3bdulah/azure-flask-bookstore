@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="book-details-container">
+        <div class="book-header">
+            <h1>{{ book['title'] }}</h1>
+        </div>
+
+        <div class="book-info">
+            <ul>
+                <li><strong>ISBN:</strong> {{ book['isbn'] }}</li>
+                <li><strong>Year:</strong> {{ book['year'] }}</li>
+                <li><strong>Price:</strong> ${{ book['price'] }}</li>
+                <li><strong>Number of Pages:</strong> {{ book['page'] }}</li>
+                <li><strong>Category:</strong> {{ book['category'] }}</li>
+                <li><strong>Publisher ID:</strong> {{ book['publisher']['id'] }}</li>
+                <li><strong>Publisher Name:</strong> {{ book['publisher']['name'] }}</li>
+                <li><strong>Author Identity No:</strong> {{ book['author']['identityNo'] }}</li>
+                <li><strong>Author:</strong> {{ book['author']['firstName'] }} {{ book['author']['lastName'] }}</li>
+            </ul>
+        </div>
+
+        <div class="book-actions">
+            <a href="{{ url_for('main.edit_book', id=book['_id']) }}" class="btn-edit">✏️ Edit</a>
+            <button class="btn-delete" id="deleteButton" data-id="{{ book['_id'] }}">🗑️ Delete</button>
+            <a href="{{ url_for('main.index') }}" class="btn-back">⬅️ Back to List</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("deleteButton").addEventListener('click', function () {
+            const bookId = this.dataset.id;
+            if (confirm("Are you sure you want to delete this book?")) {
+                fetch(`/book/${bookId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Book deleted successfully.");
+                            window.location.href = '/';
+                        } else {
+                            alert("Failed to delete the book.");
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            }
+        });
+    </script>
+</body>
+</html>
