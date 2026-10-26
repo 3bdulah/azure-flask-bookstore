@@ -3,11 +3,11 @@
 **Public repository:** [github.com/3bdulah/azure-flask-bookstore](https://github.com/3bdulah/azure-flask-bookstore) — start there for badges, CI, and the high-level README.
 
 ## Overview
-The **Bookstore App** is a cloud-based application developed using Python, Flask, and MongoDB. It is deployed on **Azure Kubernetes Service (AKS)** with Docker images stored in **Azure Container Registry (ACR)**. The application supports full CRUD (Create, Read, Update, Delete) operations for managing book records.
+The **Bookstore App** is a cloud-based application developed using Python, Flask, and MongoDB. It is designed for deployment on **Azure Kubernetes Service (AKS)** with Docker images stored in **Azure Container Registry (ACR)**. The application supports full CRUD (Create, Read, Update, Delete) operations for managing book records.
 
 ## Features
 - **Create, Read, Update, Delete (CRUD) Operations:** Add, view, update, and delete book records.
-- **Cloud Deployment:** Fully containerized and deployed using AKS.
+- **Cloud Deployment:** Containerized deployment configuration for AKS.
 - **Secure Networking:** Kubernetes Network Policies for secure communication between pods.
 - **Database Management:** MongoDB hosted on Azure Cosmos DB with automatic scaling and backup.
 
@@ -82,7 +82,7 @@ The **Bookstore App** is a cloud-based application developed using Python, Flask
 
 ## Contributors
 - **Project Owner:** Abdullah Hani Abdellatif Al-Shobaki
-- **Student ID:** 2284612
+- **Student ID:** 
 
 ## License
 This project is licensed under the MIT License.
